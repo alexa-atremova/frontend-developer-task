@@ -4,7 +4,7 @@ const useStore = create((set) => ({
   searchTerm: "",
   searchResults: [],
 
-  selectedItems: [], // Добавьте selectedItems в состояние
+  selectedItems: [],
 
   setSearchTerm: (searchTerm) => set({ searchTerm }),
   selectItem: (item) =>
@@ -16,10 +16,7 @@ const useStore = create((set) => ({
       ),
     })),
 
-  // Ваша функция для получения данных с API и фильтрации результатов
   fetchData: async () => {
-    // Здесь вы можете сделать запрос к вашему API и обновить searchResults
-    // Примерно так:
     const response = await fetch(
       "https://652f91320b8d8ddac0b2b62b.mockapi.io/autocomplete"
     );

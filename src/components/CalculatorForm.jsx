@@ -1,5 +1,7 @@
-import React from "react";
-import { useStore } from "./store";
+import React, { useEffect, useState } from "react";
+import { useStore } from "./../store/store";
+import { calculateExpression } from "./../setting/exps";
+import "./styles.css";
 
 const CalculatorForm = () => {
   const {
@@ -11,6 +13,8 @@ const CalculatorForm = () => {
     clearItem,
   } = useStore();
 
+  const [result, setResult] = useState(0);
+
   const handleSearch = (event) => {
     const searchTerm = event.target.value;
     setSearchTerm(searchTerm);
@@ -18,6 +22,7 @@ const CalculatorForm = () => {
 
   const handleSelect = (item) => {
     selectItem(item);
+    setSearchTerm("");
   };
 
   const handleClear = (item) => {
@@ -30,33 +35,82 @@ const CalculatorForm = () => {
     return itemName.startsWith(lowerCaseSearchTerm);
   });
 
+  const handlekeyDown = (event) => {
+    if (event.key === "Enter") {
+      if (filteredResults.length > 0) {
+        selectItem(filteredResults[0]);
+      } else {
+        const searchTerm = event.target.value;
+        selectItem({
+          name: searchTerm,
+          id: `${searchTerm}${Date.now()}`,
+          value: searchTerm,
+        });
+      }
+      setSearchTerm("");
+    }
+  };
+  useEffect(() => {
+    calculateResult();
+  }, [selectedItems]);
+
+  const calculateResult = () => {
+    const values = selectedItems.map((item) => item.value);
+
+    if (values.length === 0) {
+      setResult(0); // Устанавливаем результат в 0
+      return;
+    }
+
+    // Вычисляем сумму всех values
+    // const result = values.reduce(
+    //   (accumulator, currentValue) => accumulator + currentValue
+    // );
+    const result = calculateExpression(values.join());
+
+    // Устанавливаем результат в state
+    setResult(result);
+  };
+
   return (
-    <div>
-      <div className="input-container">
-        {selectedItems.map((item) => (
-          <div key={item.id} className="selected-item">
-            {item.name}
-            <span className="clear-button" onClick={() => handleClear(item)}>
-              X
-            </span>
+    <div className="wrap">
+      <div className="container">
+        <div className="result">
+          {" "}
+          <p>{result}</p>
+        </div>
+        <div className="input-container">
+          <div className="items">
+            {selectedItems.map((item) => (
+              <div key={item.id} className="selected-item">
+                {item.name}
+
+                <span
+                  className="clear-button"
+                  onClick={() => handleClear(item)}
+                >
+                  X
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
-        <input
-          type="text"
-          placeholder="Введите name"
-          value={searchTerm}
-          onChange={handleSearch}
-        />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearch}
+            onKeyDown={handlekeyDown}
+          />
+        </div>
+        {searchTerm && filteredResults.length > 0 && (
+          <ul>
+            {filteredResults.map((item) => (
+              <li key={item.id} onClick={() => handleSelect(item)}>
+                <p className="li-item">{item.name}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-      {searchTerm && filteredResults.length > 0 && (
-        <ul>
-          {filteredResults.map((item) => (
-            <li key={item.id} onClick={() => handleSelect(item)}>
-              {item.name}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };
