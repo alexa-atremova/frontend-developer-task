@@ -1,8 +1,15 @@
 import React from "react";
-import { useStore } from "./../store/store";
+import { useStore } from "./store";
 
 const CalculatorForm = () => {
-  const { searchTerm, searchResults, setSearchTerm, selectItem } = useStore();
+  const {
+    searchTerm,
+    searchResults,
+    setSearchTerm,
+    selectedItems,
+    selectItem,
+    clearItem,
+  } = useStore();
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value;
@@ -13,18 +20,34 @@ const CalculatorForm = () => {
     selectItem(item);
   };
 
-  const filteredResults = searchResults.filter((item) =>
-    item.name.toLowerCase().startsWith(searchTerm.toLowerCase())
-  );
+  const handleClear = (item) => {
+    clearItem(item);
+  };
+
+  const filteredResults = searchResults.filter((item) => {
+    const itemName = item.name.toLowerCase();
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return itemName.startsWith(lowerCaseSearchTerm);
+  });
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Введите name"
-        value={searchTerm}
-        onChange={handleSearch}
-      />
+      <div className="input-container">
+        {selectedItems.map((item) => (
+          <div key={item.id} className="selected-item">
+            {item.name}
+            <span className="clear-button" onClick={() => handleClear(item)}>
+              X
+            </span>
+          </div>
+        ))}
+        <input
+          type="text"
+          placeholder="Введите name"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
       {searchTerm && filteredResults.length > 0 && (
         <ul>
           {filteredResults.map((item) => (

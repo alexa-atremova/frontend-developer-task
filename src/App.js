@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useStore } from "./store/store";
+import { useStore } from "./components/store";
 import CalculatorForm from "./components/CalculatorForm";
 
 function App() {
