@@ -58,17 +58,12 @@ const CalculatorForm = () => {
     const values = selectedItems.map((item) => item.value);
 
     if (values.length === 0) {
-      setResult(0); // Устанавливаем результат в 0
+      setResult(0);
       return;
     }
 
-    // Вычисляем сумму всех values
-    // const result = values.reduce(
-    //   (accumulator, currentValue) => accumulator + currentValue
-    // );
     const result = calculateExpression(values.join());
 
-    // Устанавливаем результат в state
     setResult(result);
   };
 
@@ -76,8 +71,7 @@ const CalculatorForm = () => {
     <div className="wrap">
       <div className="container">
         <div className="result">
-          {" "}
-          <p>{result}</p>
+          <p>{result ? result : "0"}</p>
         </div>
         <div className="input-container">
           <div className="items">
@@ -101,16 +95,16 @@ const CalculatorForm = () => {
             onKeyDown={handlekeyDown}
           />
         </div>
-        {searchTerm && filteredResults.length > 0 && (
-          <ul>
-            {filteredResults.map((item) => (
-              <li key={item.id} onClick={() => handleSelect(item)}>
-                <p className="li-item">{item.name}</p>
-              </li>
-            ))}
-          </ul>
-        )}
       </div>
+      {searchTerm && filteredResults.length > 0 && (
+        <ul>
+          {filteredResults.map((item) => (
+            <li key={item.id} onClick={() => handleSelect(item)}>
+              <p className="li-item">{item.name}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
